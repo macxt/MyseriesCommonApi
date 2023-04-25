@@ -27,3 +27,10 @@ MYLOG_INFO << "Remain " << m_SubmitTaskQueue.TaskSize() << " tasks to be process
 MyThreadPool poolObj(nThreadNum);
 
 poolObj.CommitTask(passInFunc, FuncParam1, FuncParam2, ...);    //在该对象被析构时线程自动阻塞直至任务函数执行完成
+
+
+# Update Date: 2023/04/25
+
+# Update Content: 
+
+	增加了整个工程中算子处理的基础框架，具体算子需要进行注册、继承基类并重写两个纯虚函数完成相应功能的实现，充分利用了C++多态的特性。

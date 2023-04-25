@@ -111,8 +111,9 @@ public:
 		@str: 待分割字符串
 		@retVecRes: 存储分割结果的容器
 		@sepStr: 指定分割符(可以是单字符也可以是子字符串)
+		@bIsSplitFirst:指定是否只分割第一次，默认为全部分割 e.g: --param="PG:dbname=xxx host=xxx port=xxx user=xxx password=xxx"
 	*/
-	static void SplitStr(std::string const &str, std::vector<std::string> &retVecRes, std::string const &sepStr);
+	static void SplitStr(std::string const &str, std::vector<std::string> &retVecRes, std::string const &sepStr, bool bIsSplitFirst = false);
 
 	///*
 	//	@StringToWString: 将string转为wstring

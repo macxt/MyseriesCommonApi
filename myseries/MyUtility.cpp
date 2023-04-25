@@ -317,7 +317,7 @@ std::string CommUtility::ExtractMiddleStr(std::string const &src, std::string co
 	return sReturnStr;
 }
 
-void CommUtility::SplitStr(std::string const &str, std::vector<std::string> &retVecRes, std::string const &sepStr)
+void CommUtility::SplitStr(std::string const &str, std::vector<std::string> &retVecRes, std::string const &sepStr, bool bIsSplitFirst)
 {
 	if (str.empty() || sepStr.empty()) return;
 
@@ -335,6 +335,12 @@ void CommUtility::SplitStr(std::string const &str, std::vector<std::string> &ret
 		retVecRes.emplace_back(std::move(sTmpExtrStr));
 
 		npos_begin = npos_end + sepStr.size();
+
+		if (bIsSplitFirst) {
+			sTmpExtrStr = str.substr(npos_begin);
+			retVecRes.emplace_back(std::move(sTmpExtrStr));
+			return;
+		}
 		npos_end = str.find(sepStr, npos_begin);
 	}
 
