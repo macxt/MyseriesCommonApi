@@ -1,0 +1,30 @@
+CXX := g++
+
+# C Standard Version
+csv := 17
+
+# Cxx Compile Standard
+CSTANDARD := -std=c++${csv}
+
+CXXFLAGS := -Wall -O2 -fPIC
+
+ifeq (${debug},y)
+	CXXFLAGS += -g
+endif
+
+ifeq (${detail},y)
+	CXXFLAGS += -v
+endif
+
+#This variable can be modified later.
+INCLUDE_DIR :=-I/usr/include \
+-I/usr/local/include
+
+#This variable can be modified later.
+LIBRARY_DIR :=-L/usr/lib \
+-L/usr/local/lib
+
+#This variable can be modified later.
+LIBRARIES :=
+
+RM := rm -f

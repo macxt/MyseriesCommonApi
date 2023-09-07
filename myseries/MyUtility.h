@@ -93,6 +93,13 @@ public:
 	static void RemoveCharFromStr(std::string &str, char c);
 
 	/*
+		@RemoveCharFromStr: 将Vector中包含的字符都从str中移除
+		@str: 待处理的输入字符串
+		@charVec: 待移除的字符Vector
+	*/
+	static void RemoveCharFromStr(std::string &str, std::vector<char> const &charVec);
+
+	/*
 		@TrimSpace:删除字符串两边的空格
 		@str:待处理字符串
 	*/
@@ -115,17 +122,17 @@ public:
 	*/
 	static void SplitStr(std::string const &str, std::vector<std::string> &retVecRes, std::string const &sepStr, bool bIsSplitFirst = false);
 
-	///*
-	//	@StringToWString: 将string转为wstring
-	//	@instr: 待转换字符串
-	//*/
-	//static std::wstring StringToWString(const std::string &instr);
+	/*
+		@StringToWString: 将string转为wstring
+		@instr: 待转换字符串
+	*/
+	static std::wstring StringToWString(const std::string &instr);
 
-	///*
-	//	@StringToWString: 将wstring转为string
-	//	@instr: 待转换字符串
-	//*/
-	//static std::string WStringToString(const std::wstring &instr);
+	/*
+		@StringToWString: 将wstring转为string
+		@instr: 待转换字符串
+	*/
+	static std::string WStringToString(const std::wstring &instr);
 
 	/*
 		@ReplaceStr: 用新子串替换输入字符串中的旧子串
@@ -154,7 +161,7 @@ public:
 		@int n: 需要保留的小数位
 		@return: 返回转换后的字符串	e.g: (23459874098,4) ---> "2345987.4098"
 	*/
-	static std::string DigitToString(GUIntBig num, int n);
+	static std::string DigitToString(GEB_ULL num, int n);
 
 	/*
 		@StrToStrRoundN: 将输入字符串表示的数字按照需要保留的位数四舍五入转换成新的字符串并返回
@@ -244,6 +251,12 @@ public:
 		@dirpath: 待处理的目录路径
 	*/
 	static bool DeleteDir(const std::string &dirpath);
+
+	/*
+		@GetCurrentDir: 获取当前工作路径
+		@return: 返回当前工作路径std::string
+	*/
+	static std::string GetCurrentDir() noexcept;
 
 	/*
 		@GetFilePathFromFullPath: 从文件全路径获取所属目录路径

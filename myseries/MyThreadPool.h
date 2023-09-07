@@ -6,6 +6,7 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include <atomic>
 #include <condition_variable>
 
 /*
@@ -32,20 +33,20 @@ private:
 	public:
 		WorkerThread(size_t nThrdIndex, MyThreadPool *thrdPool) : nThrdID(nThrdIndex), selfThrdPool(thrdPool) {}
 
-		void operator ()()								//重载（）运算符从任务队列取出任务并执行
+		void operator ()()											//重载（）运算符从任务队列取出任务并执行
 		{
-			bool m_bIsPopTaskDone;						//判断出队一个任务时是否成功
+			std::atomic<bool> m_bIsPopTaskDone;						//判断出队一个任务时是否成功
 
-			SubmitTaskType getOneTask;					//从任务队列取出一个任务
+			SubmitTaskType getOneTask;								//从任务队列取出一个任务
 
-			while (!selfThrdPool->m_bIsStopThrdPool)	//线程池未关闭退出之前循环从任务队列中取任务执行
+			while (!selfThrdPool->IsStopExitThrdPool())				//线程池未关闭退出之前循环从任务队列中取任务执行
 			{
 				{
 					std::unique_lock<std::mutex> uniq_lck(selfThrdPool->m_GetTaskMutex);	//为所有的工作线程加锁
 
 					selfThrdPool->m_cvAwakeThread.wait(uniq_lck, [this]() {					//任务队列不为空或者关闭退出线程池时解除当前线程的阻塞，否则持续阻塞当前线程
 						return !selfThrdPool->m_SubmitTaskQueue.IsEmpty() || selfThrdPool->m_bIsStopThrdPool;
-					});	
+					});
 
 					m_bIsPopTaskDone = selfThrdPool->m_SubmitTaskQueue.PopTask(getOneTask);		//从任务队列中取出一个任务
 				}
@@ -102,7 +103,6 @@ public:
 	}
 
 private:
-
 	void InitThreadPool()								//初始化线程池接口，在构造函数中直接调用
 	{
 		for (size_t i = 0; i < m_threadPool.size(); i++)
@@ -123,14 +123,21 @@ private:
 			}
 		}
 		MYLOG_INFO << "Remain " << m_SubmitTaskQueue.TaskSize() << " tasks to be processed.";
-		MYLOG_INFO << "Thread pool process tasks finished and return.";
+		MYLOG_INFO << "Used " << m_threadPool.size() << " threads to process tasks.";
 	}
 
-	std::vector<std::thread> m_threadPool;				//处理所有任务的线程池	
-	ThreadSafeQueue<SubmitTaskType> m_SubmitTaskQueue;	//收集所有提交任务的队列
-	std::condition_variable m_cvAwakeThread;			//该条件变量唤醒一个或多个线程
-	std::mutex m_GetTaskMutex;							//线程取任务时的互斥锁
+	bool IsStopExitThrdPool()		//停止线程池标识为true且任务队列为空时关闭退出线程池
+	{
+		return m_bIsStopThrdPool && m_SubmitTaskQueue.IsEmpty();
+	}
 
-	bool m_bIsStopThrdPool;								//是否关闭退出线程池
+private:
+
+	std::mutex							m_GetTaskMutex;			//线程取任务时的互斥锁
+	std::atomic<bool>					m_bIsStopThrdPool;		//是否关闭退出线程池
+	std::condition_variable				m_cvAwakeThread;		//该条件变量唤醒一个或多个线程
+	std::vector<std::thread>			m_threadPool;			//处理所有任务的线程池	
+	ThreadSafeQueue<SubmitTaskType>		m_SubmitTaskQueue;		//收集所有提交任务的队列
+
 };
 

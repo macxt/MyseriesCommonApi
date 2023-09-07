@@ -36,3 +36,18 @@ enum class EXPAND_LEVEL {
 	FIRST_LEVEL,	//展开第一层级
 	SECOND_LEVEL	//展开所有层级
 };
+
+//栅格影像处理方式
+enum class RasterProcType {
+	RPT_ReadOnly,	//只读
+	RPT_Update		//更新
+};
+
+/*
+	近红外与红波段实现算法
+	该枚举类支持后续扩展
+*/
+enum class NirRedAlgType {
+	ALG_CHLA = 1,
+	ALG_NDVI = 2		
+};

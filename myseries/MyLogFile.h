@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -88,4 +89,9 @@ private:
 #define	MYLOG_INFO						LogFile(__FILE__, __LINE__, __FUNCTION__, LogFile::MYLOG_INFO_LEVEL)
 #define MYLOG_ERROR						LogFile(__FILE__, __LINE__, __FUNCTION__, LogFile::MYLOG_ERROR_LEVEL)
 #define MYLOG_WARN						LogFile(__FILE__, __LINE__, __FUNCTION__, LogFile::MYLOG_WARN_LEVEL)
+
+#ifdef _MSC_VER
+#define WIN_PLATFORM
+#endif // _MSC_VER
+
 

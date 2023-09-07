@@ -2,6 +2,17 @@
 #include <ctime>
 #include <sys/timeb.h>
 
+#ifdef WIN_PLATFORM
+#define LOG_INFO	"LOG_INFO"
+#define LOG_ERROR	"LOG_ERROR"
+#define LOG_WARN	"LOG_WARN"
+#else
+#define LOG_INFO	"\033[1;32;40mLOG_INFO\033[0m"
+#define LOG_ERROR	"\033[5;31;40mLOG_ERROR\033[0m"
+#define LOG_WARN	"\033[1;33;40mLOG_WARN\033[0m"
+#endif
+
+
 std::string LogFile::sLogFileName = "";
 bool LogFile::bIsOutLogFile = false;
 
@@ -32,13 +43,13 @@ void LogFile::SetBaseLogMessage()
 	switch (ml_logLevel)
 	{
 	case MYLOG_INFO_LEVEL:
-		strLogMsg = "LOG_INFO";
+		strLogMsg = LOG_INFO;
 		break;
 	case MYLOG_ERROR_LEVEL:
-		strLogMsg = "LOG_ERROR";
+		strLogMsg = LOG_ERROR;
 		break;
 	case MYLOG_WARN_LEVEL:
-		strLogMsg = "LOG_WARN";
+		strLogMsg = LOG_WARN;
 		break;
 	default:
 		break;

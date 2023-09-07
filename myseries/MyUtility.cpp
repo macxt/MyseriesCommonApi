@@ -1,5 +1,5 @@
 #include "MyUtility.h"
-//#include "cpl_string.h"
+#include "cpl_string.h"
 
 std::string CommUtility::ToLower(const std::string &instr) noexcept
 {
@@ -62,6 +62,15 @@ bool CommUtility::IsEndWith(const std::string &str, const std::string &subStr, b
 void CommUtility::RemoveCharFromStr(std::string &str, char c)
 {
 	str.erase(std::remove(str.begin(), str.end(), c), str.end());
+	return;
+}
+
+void CommUtility::RemoveCharFromStr(std::string & str, std::vector<char> const & charVec)
+{
+	for (auto c : charVec)
+	{
+		str.erase(std::remove(str.begin(), str.end(), c), str.end());
+	}
 	return;
 }
 
@@ -350,21 +359,21 @@ void CommUtility::SplitStr(std::string const &str, std::vector<std::string> &ret
 	return;
 }
 
-//std::wstring CommUtility::StringToWString(const std::string &instr)
-//{
-//	wchar_t* pszOutStr = CPLRecodeToWChar(instr.c_str(), CPL_ENC_UTF8, CPL_ENC_UCS2);
-//	std::wstring outstr = pszOutStr;
-//	CPLFree(pszOutStr);
-//	return outstr;
-//}
-//
-//std::string CommUtility::WStringToString(const std::wstring &instr)
-//{
-//	char* pszOutStr = CPLRecodeFromWChar(instr.c_str(), CPL_ENC_UCS2, CPL_ENC_UTF8);
-//	std::string outstr = pszOutStr;
-//	CPLFree(pszOutStr);
-//	return outstr;
-//}
+std::wstring CommUtility::StringToWString(const std::string &instr)
+{
+	wchar_t* pszOutStr = CPLRecodeToWChar(instr.c_str(), CPL_ENC_UTF8, CPL_ENC_UCS2);
+	std::wstring outstr = pszOutStr;
+	CPLFree(pszOutStr);
+	return outstr;
+}
+
+std::string CommUtility::WStringToString(const std::wstring &instr)
+{
+	char* pszOutStr = CPLRecodeFromWChar(instr.c_str(), CPL_ENC_UCS2, CPL_ENC_UTF8);
+	std::string outstr = pszOutStr;
+	CPLFree(pszOutStr);
+	return outstr;
+}
 
 void CommUtility::ReplaceStr(std::string &str, const std::string &oldstr, const std::string &newstr, bool bIsReplaceAll /*= true*/)
 {
@@ -396,7 +405,7 @@ std::string CommUtility::DoubleToStringSetBits(double df_in, int bits)
 	return sret;
 }
 
-std::string CommUtility::DigitToString(GUIntBig num, int n)
+std::string CommUtility::DigitToString(GEB_ULL num, int n)
 {
 	std::string s_ret;
 	double df_out = num / pow(10, n);
@@ -559,7 +568,7 @@ int CommUtility::code_convert(char * from_charset, char * to_charset, char * inb
 		return -1;
 	}
 	iconv_close(cd);
-	*pout = '\0';
+	**pout = '\0';
 
 	return 0;
 }
@@ -630,6 +639,19 @@ bool CommUtility::DeleteDir(const std::string &dirpath)
 #endif
 
 	return 0 == system(sCommondLine.c_str());
+}
+
+std::string CommUtility::GetCurrentDir() noexcept
+{
+	char cBuffPath[512] = { 0 };
+
+#ifdef WIN_PLATFORM
+	_getcwd(cBuffPath, sizeof(cBuffPath));
+#else
+	getcwd(cBuffPath, sizeof(cBuffPath));
+#endif 
+
+	return std::string(cBuffPath);
 }
 
 std::string CommUtility::GetFilePathFromFullPath(const std::string &fileFullPath) noexcept
