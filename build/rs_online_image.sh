@@ -12,13 +12,14 @@ echo "project_dir: ${project_dir}"
 
 ## default variable value ##
 region=
+suffix=
 name=rs_algorithm_process
 version_major=v1
 version_minor=2
 tar_name=${name}
 
 ## parse script arguments ##
-while getopts "n:a:i:t:" opt; do
+while getopts "n:a:i:t:s:" opt; do
   case $opt in
     n)
       name=$OPTARG
@@ -32,15 +33,29 @@ while getopts "n:a:i:t:" opt; do
     t)
       tar_name=$OPTARG
       ;;
+	s)
+      suffix=$OPTARG
+      ;;
   esac
 done
+
+## determine whether suffix variable is empty ##
+if [[ ! ${suffix} ]]; then
+	echo "suffix variable is empty."
+	full_name="${name}"
+else
+	echo "suffix variable is not empty."
+	full_name="${name}_${suffix}"
+fi
+
+echo "full_name: ${full_name}"
 
 
 ## print arguments value ##
 echo
 echo "###################################################" 
 echo "region : ${region}"
-echo "name : ${name}"
+echo "full_name : ${full_name}"
 echo "version_major : ${version_major}"
 echo "version_minor : ${version_minor}"
 echo "tar_name : ${tar_name}"
@@ -70,10 +85,10 @@ fi
 ## determine whether region variable is empty ##
 if [[ ! ${region} ]]; then
 	echo "region variable is empty."
-	image_name="${name}:${version_major}.${version_minor}"
+	image_name="${full_name}:${version_major}.${version_minor}"
 else
 	echo "region variable is not empty."
-	image_name="${region}/${name}:${version_major}.${version_minor}"
+	image_name="${region}/${full_name}:${version_major}.${version_minor}"
 fi
 
 echo "image_name: ${image_name}"
@@ -81,7 +96,7 @@ echo "image_name: ${image_name}"
 
 cd ${project_dir}
 
-sudo docker build -t ${image_name} -f ${dockerfile} .
+sudo docker build -t ${image_name} --build-arg ALGNAME=${suffix} -f ${dockerfile} .
 
 build_ret=$?
 

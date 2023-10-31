@@ -1,0 +1,33 @@
+#This Dockerfile is to build geb runtime images for pushing online environment.
+
+#step1:compile project code
+FROM myb_baseimages:v1.2 AS project-compile-result
+
+RUN apt-get install -y curl
+
+COPY Miniconda3-py38_23.1.0-1-Linux-x86_64.sh /home/
+
+RUN bash /home/Miniconda3-py38_23.1.0-1-Linux-x86_64.sh -b -p /home/miniconda3 && rm /home/Miniconda3-py38_23.1.0-1-Linux-x86_64.sh
+
+ENV PATH=/home/miniconda3/bin:$PATH
+
+ADD service.tar.gz /home/miniconda3/envs/
+
+ENV PATH=/home/miniconda3/envs/service/bin:$PATH
+
+RUN sed -i 's!/home/miniconda3/envs/service/bin/python!/home/miniconda3/envs/service/bin/python!g' /home/miniconda3/envs/service/bin/pip
+
+#some infomation about runtime-images
+LABEL maintainer="myb@geovis.com.cn" name="geb_algorithm_process_images:v1.2" deccription="geovis earth brain algorithm process analysis images_v1.2"
+
+RUN mkdir /mnt/geb_analysis
+
+ARG ALG_FOLDER
+
+COPY $ALG_FOLDER /mnt/geb_analysis
+
+WORKDIR /mnt/geb_analysis/bin
+
+#set environment variable
+ENV PATH=/mnt/geb_analysis/bin:$PATH LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/mnt/geb_analysis/lib LANG=C.UTF-8
+

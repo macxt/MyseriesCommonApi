@@ -1,0 +1,22 @@
+# This file aims to bulid myb_baseimages:v1.2
+
+FROM myb_images:v1.1
+
+# maintainer
+LABEL maintainer="myb@geovis.com.cn" name="myb_baseimages:v1.2" deccription="install g++-9 make cmake gdb tools based on v1.1"
+
+# set work dir
+WORKDIR /opt/earth_brain
+
+# copy dockerfile to current doc folder
+COPY Dockerfile ./doc/
+
+# update software list and upgrade software installed  
+RUN apt-get update -y && apt-get upgrade -y 
+
+# install g++-9 make cmake gdb
+RUN apt-get install -y g++-9 && apt-get install -y make cmake && apt-get install -y gdb
+
+# set environment variable
+ENV PATH=/opt/earth_brain/bin:$PATH LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/opt/earth_brain/lib
+

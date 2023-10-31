@@ -6,6 +6,8 @@ current_dir=$(pwd)
 
 package_dir=${current_dir}/../package
 
+service_dir=${current_dir}/../ServiceAlg
+
 bin_dir=${package_dir}/bin
 
 lib_dir=${package_dir}/lib
@@ -20,7 +22,8 @@ config_dir=${package_dir}/config
 #v:version print compile detail
 MakeStage=a
 CmdLineParam=
-while getopts 'b:cs:dv' opt;
+AlgorithmName=
+while getopts "b:cs:dvp:" opt;
 do
     case $opt in
         b)
@@ -38,8 +41,19 @@ do
         v)
           CmdLineParam+="detail=y "
           ;;
+        p)
+          AlgorithmName=$OPTARG
+          ;;
     esac
 done
+
+## determine whether AlgorithmName variable is empty or not.
+if [[ ! ${AlgorithmName} ]];then
+	echo "AlgorithmName variable value is empty. Error!"
+	exit 1
+else
+	echo "AlgorithmName: ${AlgorithmName}"
+fi
 
 #define shell function to excute makefile
 #the value of IsLibFile variable is "-shared" if compile target is library file.
@@ -100,6 +114,16 @@ TargetExeFile=${current_dir}/GEBAlgProcess
 #mv ${ConfigFile} ${config_dir}
 #mv ${LibFile} ${lib_dir}
 mv ${TargetExeFile} ${bin_dir}
+
+alg_service_script=${service_dir}/service_${AlgorithmName}.py
+
+if [ ! -f ${alg_service_script} ]; then
+  echo "${alg_service_script} is not exist"
+  exit 1
+fi
+
+##copy alg_service_script file to bin_dir
+cp ${alg_service_script} ${bin_dir}
 
 WinConfigDir=${current_dir}/../x64/Debug/config/
 cp -r ${WinConfigDir}/* ${config_dir}

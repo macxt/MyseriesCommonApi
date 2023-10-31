@@ -10,7 +10,8 @@ LABEL maintainer="myb@geovis.com.cn" name="geb_algorithm_process_images:v1.2" de
 WORKDIR /opt/code/geb_operator_process
 COPY GEBOperatorProcess .
 
-RUN ln -s /usr/bin/g++-9 /usr/bin/g++ && cd build/ && ./build.sh -c || exit 1
+ARG ALGNAME
+RUN ln -s /usr/bin/g++-9 /usr/bin/g++ && cd build/ && ./build.sh -c -p $ALGNAME || exit 1
 
 #step2:build finally runtime images
 FROM myb_baseimages:v1.2
